@@ -75,7 +75,7 @@ class Graph<T> {
             // try to improve state
             for (edge in vertex.adjacentEdges) {
                 val oppositeVertex = getOppositeVertex(vertex, edge)
-                if (vertex.distance + edge.weight < oppositeVertex.distance) {
+                if (!edge.trafficJam && vertex.distance + edge.weight < oppositeVertex.distance) {
                     oppositeVertex.distance = vertex.distance + edge.weight
                 }
                 oppositeVertex.visited = true
