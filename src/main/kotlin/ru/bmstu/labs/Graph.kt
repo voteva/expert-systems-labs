@@ -65,6 +65,7 @@ class Graph<T> {
             vertex.visited = false
         }
         vertexFrom.distance = 0
+        vertexFrom.visited = true
 
         val verticesQueue = LinkedList<Vertex<T>>()
         verticesQueue.add(vertexFrom)
@@ -75,7 +76,7 @@ class Graph<T> {
             // try to improve state
             for (edge in vertex.adjacentEdges) {
                 val oppositeVertex = getOppositeVertex(vertex, edge)
-                if (!edge.trafficJam && vertex.distance + edge.weight < oppositeVertex.distance) {
+                if (!edge.repairWorks && vertex.distance + edge.weight < oppositeVertex.distance) {
                     oppositeVertex.distance = vertex.distance + edge.weight
                 }
                 oppositeVertex.visited = true
