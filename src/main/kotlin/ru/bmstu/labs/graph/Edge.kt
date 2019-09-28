@@ -1,8 +1,7 @@
-package ru.bmstu.labs
+package ru.bmstu.labs.graph
 
 data class Edge<T>(
         val vertexFrom: Vertex<T>,
         val vertexTo: Vertex<T>,
-        val weight: Int,
-        val repairWorks: Boolean = false
+        val weight: Int
 )

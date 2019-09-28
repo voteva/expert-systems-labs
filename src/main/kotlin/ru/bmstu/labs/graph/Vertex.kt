@@ -1,4 +1,4 @@
-package ru.bmstu.labs
+package ru.bmstu.labs.graph
 
 data class Vertex<T>(
         val value: T,
