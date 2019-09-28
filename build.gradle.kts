@@ -1,6 +1,5 @@
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.3.41")
-    application
 }
 
 repositories {
@@ -13,8 +12,4 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-}
-
-application {
-    mainClassName = "ru.bmstu.labs.AppKt"
 }
