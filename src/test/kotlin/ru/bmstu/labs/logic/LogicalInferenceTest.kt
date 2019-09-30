@@ -8,7 +8,7 @@ class LogicalInferenceTest {
 
     @Test
     fun testFol1() {
-        val rules: List<Predicate<String>> = mutableListOf()
+        val rules: List<Rule<String>> = mutableListOf()
 
         val facts: List<Predicate<String>> = mutableListOf(
                 Predicate("a", "b"),
