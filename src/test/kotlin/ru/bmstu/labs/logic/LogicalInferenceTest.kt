@@ -11,7 +11,9 @@ class LogicalInferenceTest {
         val rules: List<Rule<String>> = mutableListOf()
 
         val facts: List<Predicate<String>> = mutableListOf(
+                Predicate("a", "z"),
                 Predicate("a", "b"),
+                Predicate("b", "z"),
                 Predicate("b", "c"))
 
         val logicalInference = LogicalInference<String, String>()

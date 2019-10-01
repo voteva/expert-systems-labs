@@ -1,9 +1,8 @@
 package ru.bmstu.labs.logic
 
-data class Predicate<T>(
+data class Goal<T>(
         val lhs: T,
-        val rhs: T,
-        var depth: Int = 0
+        val rhs: T
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
