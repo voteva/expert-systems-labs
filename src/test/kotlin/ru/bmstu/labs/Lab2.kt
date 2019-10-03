@@ -47,6 +47,7 @@ class Lab2 {
         assertTrue(algorithm.fol(rules, facts, Predicate("moscow", "kiev")))
         assertTrue(algorithm.fol(rules, facts, Predicate("kazan", "perm")))
         assertTrue(algorithm.fol(rules, facts, Predicate("perm", "moscow")))
+        assertTrue(algorithm.fol(rules, facts, Predicate("kazan", "moscow")))
         assertTrue(algorithm.fol(rules, facts, Predicate("moscow", "perm")))
         assertTrue(algorithm.fol(rules, facts, Predicate("kirov", "perm")))
         assertTrue(algorithm.fol(rules, facts, Predicate("kiev", "perm")))
