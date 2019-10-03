@@ -1,10 +1,12 @@
 package ru.bmstu.labs
 
-import ru.bmstu.labs.algo.ShortestPath
-import ru.bmstu.labs.graph.Graph
+import ru.bmstu.labs.graph.ShortestPathAlgorithm
+import ru.bmstu.labs.graph.model.Graph
 import kotlin.test.Test
 
 class Lab1 {
+
+    private val algorithm = ShortestPathAlgorithm<String>()
 
     @Test
     fun shortestPath() {
@@ -44,9 +46,7 @@ class Lab1 {
         graph.addEdge(ryazan, moscow, 202)
         graph.addEdge(yaroslavl, moscow, 265)
 
-        val algo = ShortestPath<String>()
-
-        val shortestPath = algo.getShortestPath(graph, perm, moscow)
+        val shortestPath = algorithm.getShortestPath(graph, perm, moscow)
         shortestPath.forEach {
             println("-> " + it.value + " " + it.distance)
         }

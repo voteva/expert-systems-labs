@@ -1,10 +1,10 @@
-package ru.bmstu.labs.algo
+package ru.bmstu.labs.graph
 
-import ru.bmstu.labs.graph.Graph
-import ru.bmstu.labs.graph.Vertex
+import ru.bmstu.labs.graph.model.Graph
+import ru.bmstu.labs.graph.model.Vertex
 import java.util.*
 
-class BreadthFirstSearch<T> {
+class BreadthFirstSearchAlgorithm<T> {
 
     fun bfs(graph: Graph<T>, vertexFrom: Vertex<T>) {
         for (vertex in graph.vertices) {

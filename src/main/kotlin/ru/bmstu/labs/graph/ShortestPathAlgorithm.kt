@@ -1,12 +1,12 @@
-package ru.bmstu.labs.algo
+package ru.bmstu.labs.graph
 
-import ru.bmstu.labs.graph.Graph
-import ru.bmstu.labs.graph.Vertex
+import ru.bmstu.labs.graph.model.Graph
+import ru.bmstu.labs.graph.model.Vertex
 
-class ShortestPath<T> {
+class ShortestPathAlgorithm<T> {
 
     fun getShortestPath(graph: Graph<T>, vertexFrom: Vertex<T>, vertexTo: Vertex<T>): List<Vertex<T>> {
-        val algo = BreadthFirstSearch<T>()
+        val algo = BreadthFirstSearchAlgorithm<T>()
         algo.bfs(graph, vertexFrom)
 
         val path: MutableList<Vertex<T>> = mutableListOf()

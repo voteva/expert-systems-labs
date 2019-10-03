@@ -1,4 +1,4 @@
-package ru.bmstu.labs.logic
+package ru.bmstu.labs.logical_inference.model
 
 enum class RuleDeclaration(rule: String) {
     RULE_PARTITION("f(x,y)>f(x,z)&f(z,y)"),

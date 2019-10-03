@@ -1,4 +1,4 @@
-package ru.bmstu.labs.logic
+package ru.bmstu.labs.logical_inference.model
 
 data class Predicate(
         var lhs: String,

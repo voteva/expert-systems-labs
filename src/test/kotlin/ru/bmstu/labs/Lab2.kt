@@ -1,16 +1,16 @@
 package ru.bmstu.labs
 
-import ru.bmstu.labs.logic.LogicalInference
-import ru.bmstu.labs.logic.Predicate
-import ru.bmstu.labs.logic.Rule
-import ru.bmstu.labs.logic.RuleDeclaration.*
+import ru.bmstu.labs.logical_inference.LogicalInferenceAlgorithm
+import ru.bmstu.labs.logical_inference.model.Predicate
+import ru.bmstu.labs.logical_inference.model.Rule
+import ru.bmstu.labs.logical_inference.model.RuleDeclaration.*
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class Lab2 {
 
-    private val algorithm = LogicalInference()
+    private val algorithm = LogicalInferenceAlgorithm()
 
     private val facts: List<Predicate> = mutableListOf(
             Predicate("kirov", "kazan"),

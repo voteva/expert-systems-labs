@@ -1,9 +1,11 @@
-package ru.bmstu.labs.logic
+package ru.bmstu.labs.logical_inference
 
-import ru.bmstu.labs.logic.RuleDeclaration.*
+import ru.bmstu.labs.logical_inference.model.Predicate
+import ru.bmstu.labs.logical_inference.model.Rule
+import ru.bmstu.labs.logical_inference.model.RuleDeclaration.*
 
-class LogicalInference {
-    private val MAX_RECURSION_DEPTH: Int = 5
+class LogicalInferenceAlgorithm {
+    private val maxRecursionDepth: Int = 5
 
     fun fol(rules: List<Rule>, facts: List<Predicate>, goal: Predicate, depth: Int = 0): Boolean {
         if (isRulesContradictsGoal(rules, goal)) {
@@ -12,7 +14,7 @@ class LogicalInference {
         if (isGoalInFactsList(facts, goal)) {
             return true
         }
-        if (depth == MAX_RECURSION_DEPTH) {
+        if (depth == maxRecursionDepth) {
             return false
         }
         if (rules.isEmpty()) {

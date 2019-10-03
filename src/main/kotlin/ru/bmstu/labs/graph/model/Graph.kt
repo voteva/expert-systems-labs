@@ -1,4 +1,4 @@
-package ru.bmstu.labs.graph
+package ru.bmstu.labs.graph.model
 
 import java.util.*
 
