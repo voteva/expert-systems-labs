@@ -1,13 +1,12 @@
 package ru.bmstu.labs.logic
 
-data class Predicate<T>(
-        val lhs: T,
-        val rhs: T,
-        var depth: Int = 0
+data class Predicate(
+        var lhs: String,
+        var rhs: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Predicate<*>) return false
+        if (other !is Predicate) return false
         return lhs == other.lhs && rhs == other.rhs
     }
 

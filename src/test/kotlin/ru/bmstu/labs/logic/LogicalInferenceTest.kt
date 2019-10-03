@@ -8,15 +8,15 @@ class LogicalInferenceTest {
 
     @Test
     fun testFol1() {
-        val rules: List<Rule<String>> = mutableListOf()
+        val rules: List<Rule> = mutableListOf()
 
-        val facts: List<Predicate<String>> = mutableListOf(
+        val facts: List<Predicate> = mutableListOf(
                 Predicate("a", "z"),
                 Predicate("a", "b"),
                 Predicate("b", "z"),
                 Predicate("b", "c"))
 
-        val logicalInference = LogicalInference<String, String>()
+        val logicalInference = LogicalInference()
 
         var result = logicalInference.fol(rules, facts, Predicate("a", "b"))
         assertTrue(result)

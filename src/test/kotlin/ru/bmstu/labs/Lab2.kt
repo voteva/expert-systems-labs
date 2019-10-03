@@ -10,38 +10,33 @@ import kotlin.test.assertTrue
 class Lab2 {
 
     @Test
-    fun shortestPath() {
-        val algorithm = LogicalInference<String, String>()
+    fun pathAvailable() {
+        val algorithm = LogicalInference()
 
-        val rules: List<Rule<String>> = mutableListOf()
+        val rules: List<Rule> = mutableListOf(
+                Rule.RULE1,
+                Rule.RULE2
+        )
 
-        val facts: List<Predicate<String>> = mutableListOf(
-                Predicate("perm", "ekaterinburg"),
-                Predicate("perm", "kirov"),
+        val facts: List<Predicate> = mutableListOf(
+                Predicate("kirov", "kazan"),
                 Predicate("perm", "kazan"),
-                Predicate("perm", "izhevsk"),
-                Predicate("izhevsk", "kazan"),
-                Predicate("kirov", "yaroslavl"),
-                Predicate("ekaterinburg", "chelyabinsk"),
-                Predicate("ekaterinburg", "ufa"),
-                Predicate("chelyabinsk", "ufa"),
-                Predicate("ufa", "kazan"),
-                Predicate("kazan", "cheboksary"),
-                Predicate("kazan", "yoshkarOla"),
-                Predicate("yoshkarOla", "nNovgorod"),
-                Predicate("cheboksary", "nNovgorod"),
-                Predicate("nNovgorod", "vladimir"),
-                Predicate("vladimir", "moscow"),
-                Predicate("ryazan", "moscow"),
-                Predicate("yaroslavl", "moscow"))
+                Predicate("kazan", "vladimir"),
+                Predicate("vladimir", "moscow"))
+
+//        var result = algorithm.fol(rules, facts, Predicate("perm", "kazan"))
+//        assertTrue(result)
+//
+//        result = algorithm.fol(rules, facts, Predicate("kazan", "perm"))
+//        assertTrue(result)
 
         var result = algorithm.fol(rules, facts, Predicate("perm", "moscow"))
         assertTrue(result)
 
-        result = algorithm.fol(rules, facts, Predicate("ekaterinburg", "kazan"))
+        result = algorithm.fol(rules, facts, Predicate("moscow", "perm"))
         assertTrue(result)
 
-        result = algorithm.fol(rules, facts, Predicate("kirov", "ryazan"))
+        result = algorithm.fol(rules, facts, Predicate("kirov", "perm"))
         assertFalse(result)
     }
 }

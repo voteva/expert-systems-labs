@@ -1,6 +1,6 @@
 package ru.bmstu.labs.logic
 
-data class Rule<T>(
-        val head: Predicate<T>,
-        val body: List<Predicate<T>>
-)
+enum class Rule(value: String) {
+    RULE1("f(x,y)>f(x,z)&f(z,y)"),
+    RULE2("f(x,y)>f(y,x)")
+}
