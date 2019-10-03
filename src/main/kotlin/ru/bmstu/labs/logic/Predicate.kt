@@ -2,7 +2,8 @@ package ru.bmstu.labs.logic
 
 data class Predicate(
         var lhs: String,
-        var rhs: String
+        var rhs: String,
+        val negation: Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

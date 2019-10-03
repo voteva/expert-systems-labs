@@ -1,66 +1,93 @@
 package ru.bmstu.labs.logic
 
+import ru.bmstu.labs.logic.RuleDeclaration.*
+
 class LogicalInference {
-    private val MAX_DEPTH: Int = 10
+    private val MAX_RECURSION_DEPTH: Int = 5
 
     fun fol(rules: List<Rule>, facts: List<Predicate>, goal: Predicate, depth: Int = 0): Boolean {
+        if (isRulesContradictsGoal(rules, goal)) {
+            return false
+        }
         if (isGoalInFactsList(facts, goal)) {
             return true
         }
-
-        if (depth == MAX_DEPTH) {
+        if (depth == MAX_RECURSION_DEPTH) {
+            return false
+        }
+        if (rules.isEmpty()) {
             return false
         }
 
-        return rules.stream()
-                .anyMatch { rule ->
-                    for (fact in facts) {
-                        val abstractGoals = chooseAbstractGoals(rule, goal)
+        for (rule in rules) {
+            var atLeastOneFactSuccess = false
+            val abstractGoals = applyRule(rule, goal)
 
-                        val newGoals: MutableList<Predicate> = mutableListOf()
+            for (fact in facts) {
+                var allGoalsSuccess = true
 
-                        if (abstractGoals.size == 1) {
-                            if (abstractGoals[0].lhs == fact.lhs && abstractGoals[0].rhs == fact.rhs) {
-                                newGoals.add(fact)
-                            }
-                        } else if (abstractGoals.size == 2) {
-                            if (abstractGoals[0].lhs == fact.lhs && abstractGoals[1].rhs == "*") {
-                                newGoals.add(Predicate(fact.lhs, fact.rhs))
-                                newGoals.add(Predicate(fact.rhs, abstractGoals[1].rhs))
-                            } else if (abstractGoals[1].lhs == "*" && abstractGoals[1].rhs == fact.rhs) {
-                                //newGoals.add(Predicate(fact.lhs, fact.rhs))
-                                //newGoals.add(Predicate(fact.rhs, fact.rhs))
-                            }
-                        }
-
-                        val allGoalsMatch = newGoals.stream()
-                                .allMatch { newGoal ->
-                                    fol(rules, facts, newGoal, depth + 1)
-                                }
-
-                        if (allGoalsMatch && newGoals.isNotEmpty()) {
-                            return@anyMatch true
-                        }
-
-                    }
-                    false
+                val newGoals = applyFactToGoals(rule, abstractGoals, fact)
+                if (newGoals.isEmpty()) {
+                    allGoalsSuccess = false
                 }
+
+                for (newGoal in newGoals) {
+                    if (!fol(rules, facts, newGoal, depth + 1)) {
+                        allGoalsSuccess = false
+                    }
+                }
+
+                if (allGoalsSuccess) {
+                    atLeastOneFactSuccess = true
+                }
+            }
+
+            if (atLeastOneFactSuccess) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun isRulesContradictsGoal(rules: List<Rule>, goal: Predicate): Boolean {
+        return rules.any { it.argument == goal && it.argument.negation }
     }
 
     private fun isGoalInFactsList(facts: List<Predicate>, goal: Predicate): Boolean {
-        return facts.any { it == goal }
+        return facts.any { it == goal && !it.negation }
     }
 
-    private fun chooseAbstractGoals(rule: Rule, goal: Predicate): List<Predicate> {
+    private fun applyRule(rule: Rule, goal: Predicate): List<Predicate> {
         val abstractGoals: MutableList<Predicate> = mutableListOf()
 
-        if (rule == Rule.RULE1) {
-            abstractGoals.add(Predicate(goal.lhs, "*"))
-            abstractGoals.add(Predicate("*", goal.rhs))
-        } else if (rule == Rule.RULE2) {
-            abstractGoals.add(Predicate(goal.rhs, goal.lhs))
+        when (rule.declaration) {
+            RULE_PARTITION -> {
+                abstractGoals.add(Predicate(goal.lhs, "*"))
+                abstractGoals.add(Predicate("*", goal.rhs))
+            }
+            RULE_SWAP -> abstractGoals.add(Predicate(goal.rhs, goal.lhs))
         }
 
         return abstractGoals
+    }
+
+    private fun applyFactToGoals(rule: Rule, abstractGoals: List<Predicate>, fact: Predicate): List<Predicate> {
+        val newGoals: MutableList<Predicate> = mutableListOf()
+
+        when (rule.declaration) {
+            RULE_PARTITION -> {
+                if (abstractGoals[0].lhs == fact.lhs) {
+                    newGoals.add(fact)
+                    newGoals.add(Predicate(fact.rhs, abstractGoals[1].rhs))
+                } else if (abstractGoals[1].rhs == fact.rhs) {
+                    newGoals.add(Predicate(abstractGoals[0].lhs, fact.rhs))
+                    newGoals.add(fact)
+                }
+            }
+            RULE_SWAP -> newGoals.add(abstractGoals[0])
+        }
+
+        return newGoals
     }
 }
