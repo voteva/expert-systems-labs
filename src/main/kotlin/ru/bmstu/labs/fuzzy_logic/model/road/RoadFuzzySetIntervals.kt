@@ -12,7 +12,7 @@ package ru.bmstu.labs.fuzzy_logic.model.road
 object RoadFuzzySetIntervals {
 
     var daylightHours: List<Int> = mutableListOf(8, 12, 16, 20)
-    var nightTime: List<Int> = mutableListOf(20, 0, 4, 8)
+    var nightTime: List<Int> = mutableListOf(0, 4, 8, 20)
 
     var offRoad: List<Int> = mutableListOf(0, 0, 5, 10)
     var countrysideRoad: List<Int> = mutableListOf(10, 20, 30, 40)

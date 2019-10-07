@@ -4,8 +4,7 @@ import ru.bmstu.labs.fuzzy_logic.model.Rule
 import ru.bmstu.labs.fuzzy_logic.model.sets.ActivatedFuzzySet
 import ru.bmstu.labs.fuzzy_logic.model.sets.FuzzySet
 import ru.bmstu.labs.fuzzy_logic.model.sets.UnionFuzzySet
-import java.util.*
-import java.util.ArrayList
+import kotlin.math.min
 
 class MamdaniAlgorithm(
         val rules: List<Rule>,
@@ -21,73 +20,69 @@ class MamdaniAlgorithm(
     }
 
     private fun fuzzification(inputData: Array<Double>): List<Double> {
-        val b: MutableList<Double> = mutableListOf()
+        val fuzzificatedList: MutableList<Double> = mutableListOf()
 
         for (rule in rules) {
             for (condition in rule.conditions) {
-                val j = condition.variable.index
+                val conditionIndex = condition.variable.index
                 val term = condition.term
-                b.add(term.getValue(inputData[j]))
+                fuzzificatedList.add(term.getValue(inputData[conditionIndex]))
             }
         }
-        return b
+        return fuzzificatedList
     }
 
-    private fun aggregation(b: List<Double>): List<Double> {
-        val c: MutableList<Double> = mutableListOf()
-        var i = 0
+    private fun aggregation(fuzzificatedList: List<Double>): List<Double> {
+        val aggregatedList: MutableList<Double> = mutableListOf()
+        var index = 0
 
         for (rule in rules) {
             var truthOfConditions = 1.0
             for (condition in rule.conditions) {
-                truthOfConditions = Math.min(truthOfConditions, b[i])
-                i++
+                truthOfConditions = min(truthOfConditions, fuzzificatedList[index++])
             }
-            c.add(truthOfConditions)
+            aggregatedList.add(truthOfConditions)
         }
-        return c
+        return aggregatedList
     }
 
-    private fun activation(c: List<Double>): List<ActivatedFuzzySet> {
-        val activatedFuzzySets = ArrayList<ActivatedFuzzySet>()
-        var i = 0
+    private fun activation(aggregatedList: List<Double>): List<ActivatedFuzzySet> {
+        val activatedList: MutableList<ActivatedFuzzySet> = mutableListOf()
+        var index = 0
 
         for (rule in rules) {
             for (conclusion in rule.conclusions) {
-                activatedFuzzySets.add(ActivatedFuzzySet(
-                        conclusion.term, c[i] * conclusion.weight
-                ))
-                i++
+                activatedList.add(ActivatedFuzzySet(conclusion.term, aggregatedList[index++] * conclusion.weight))
             }
         }
-        return activatedFuzzySets
+        return activatedList
     }
 
-    private fun accumulation(activatedFuzzySets: List<ActivatedFuzzySet>): List<UnionFuzzySet> {
-        val unionsOfFuzzySets = HashMap<Int, UnionFuzzySet>()
-        var i = 0
+    private fun accumulation(activatedList: List<ActivatedFuzzySet>): List<UnionFuzzySet> {
+        val accumulatedMap: MutableMap<Int, UnionFuzzySet> = mutableMapOf()
+        var index = 0
 
         for (rule in rules) {
             for (conclusion in rule.conclusions) {
-                val index = conclusion.variable.index
-                if (!unionsOfFuzzySets.containsKey(index)) {
-                    unionsOfFuzzySets[index] = UnionFuzzySet()
+                val conclusionIndex = conclusion.variable.index
+                if (!accumulatedMap.containsKey(conclusionIndex)) {
+                    accumulatedMap[conclusionIndex] = UnionFuzzySet()
                 }
-                unionsOfFuzzySets[index]?.addFuzzySet(activatedFuzzySets[i])
-                i++
+                accumulatedMap[conclusionIndex]?.addFuzzySet(activatedList[index++])
             }
         }
-        return ArrayList(unionsOfFuzzySets.values)
+        return accumulatedMap.values.toList()
     }
 
-    private fun defuzzification(unionsOfFuzzySets: List<UnionFuzzySet>): List<Double> {
-        val y = ArrayList<Double>()
-        for (unionOfFuzzySets in unionsOfFuzzySets) {
-            val i1 = integral(unionOfFuzzySets, true)
-            val i2 = integral(unionOfFuzzySets, false)
-            y.add(i1 / i2)
+    private fun defuzzification(accumulatedList: List<UnionFuzzySet>): List<Double> {
+        val defuzzificatedList: MutableList<Double> = mutableListOf()
+
+        for (accumulated in accumulatedList) {
+            val i1 = integral(accumulated, true)
+            val i2 = integral(accumulated, false)
+            defuzzificatedList.add(i1 / i2)
         }
-        return y
+        return defuzzificatedList
     }
 
     private fun integral(fuzzySet: FuzzySet, useX: Boolean): Double {
@@ -95,7 +90,7 @@ class MamdaniAlgorithm(
         return integrate(0.0, 100.0, op)
     }
 
-    fun integrate(a: Double, b: Double, f: (Double) -> Double): Double {
+    private fun integrate(a: Double, b: Double, f: (Double) -> Double): Double {
         val n = 10000                 // precision parameter
         val h = (b - a) / (n - 1)     // step size
 
@@ -103,21 +98,15 @@ class MamdaniAlgorithm(
         var sum: Double = 1.0 / 3.0 * (f.invoke(a) + f.invoke(b))
 
         // 4/3 terms
-        run {
-            var i: Int = 1
-            while (i < n - 1) {
-                val x = a + h * i
-                sum += 4.0 / 3.0 * f.invoke(x)
-                i += 2
-            }
+        for (i in 1 until n step 2) {
+            val x = a + h * i
+            sum += 4.0 / 3.0 * f.invoke(x)
         }
 
         // 2/3 terms
-        var i: Int = 2
-        while (i < n - 1) {
+        for (i in 2 until n step 2) {
             val x = a + h * i
             sum += 2.0 / 3.0 * f.invoke(x)
-            i += 2
         }
 
         return sum * h

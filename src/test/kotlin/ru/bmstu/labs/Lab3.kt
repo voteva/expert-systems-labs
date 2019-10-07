@@ -110,7 +110,7 @@ class Lab3 {
                 )
         )
 
-        val algorithm = MamdaniAlgorithm(rules, arrayOf(90.0, 14.0, 90.0))
+        val algorithm = MamdaniAlgorithm(rules, arrayOf(80.0, 12.0, 90.0))
         val result = algorithm.run()
 
         println("Result for speed: $result")
