@@ -5,5 +5,6 @@ import ru.bmstu.labs.fuzzy_logic.model.sets.FuzzySet
 data class Condition(
         override val name: String,
         override val variable: Variable,
-        override val term: FuzzySet
-): Statement
+        override val term: FuzzySet,
+        val weight: Double = 1.0
+) : Statement

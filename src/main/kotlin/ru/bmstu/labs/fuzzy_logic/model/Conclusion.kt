@@ -6,5 +6,5 @@ data class Conclusion(
         override val name: String,
         override val variable: Variable,
         override val term: FuzzySet,
-        val weight: Double
+        var weight: Double = 1.0
 ) : Statement

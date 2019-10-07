@@ -12,6 +12,14 @@ class MamdaniAlgorithm(
         val inputData: Array<Double>
 ) {
 
+    fun run(): List<Double> {
+        val fuzzificated: List<Double> = fuzzification(inputData)
+        val aggregated: List<Double> = aggregation(fuzzificated)
+        val activated: List<ActivatedFuzzySet> = activation(aggregated)
+        val accumulated: List<UnionFuzzySet> = accumulation(activated)
+        return defuzzification(accumulated)
+    }
+
     private fun fuzzification(inputData: Array<Double>): List<Double> {
         val b: MutableList<Double> = mutableListOf()
 
