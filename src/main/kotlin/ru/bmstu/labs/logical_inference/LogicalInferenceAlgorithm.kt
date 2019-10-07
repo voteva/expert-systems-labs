@@ -8,7 +8,7 @@ class LogicalInferenceAlgorithm {
     private val maxRecursionDepth: Int = 5
 
     fun fol(rules: List<Rule>, facts: List<Predicate>, goal: Predicate, depth: Int = 0): Boolean {
-        if (isRulesContradictsGoal(rules, goal)) {
+        if (isRulesContradictGoal(rules, goal)) {
             return false
         }
         if (isGoalInFactsList(facts, goal)) {
@@ -52,7 +52,7 @@ class LogicalInferenceAlgorithm {
         return false
     }
 
-    private fun isRulesContradictsGoal(rules: List<Rule>, goal: Predicate): Boolean {
+    private fun isRulesContradictGoal(rules: List<Rule>, goal: Predicate): Boolean {
         return rules.any { it.argument == goal && it.argument.negation }
     }
 

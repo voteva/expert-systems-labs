@@ -6,7 +6,6 @@ import ru.bmstu.labs.fuzzy_logic.model.sets.FuzzySet
 import ru.bmstu.labs.fuzzy_logic.model.sets.UnionFuzzySet
 import java.util.*
 import java.util.ArrayList
-import java.util.function.DoubleUnaryOperator
 
 class MamdaniAlgorithm(
         val rules: List<Rule>,
@@ -84,33 +83,32 @@ class MamdaniAlgorithm(
     }
 
     private fun integral(fuzzySet: FuzzySet, useX: Boolean): Double {
-        //return integrate(0.0, 100.0, op)
-        //return integrate(0.0, 100.0, (x) -> useX ? x * fuzzySet.getValue(x) : fuzzySet.getValue(x));
-        return 0.0 // TODO
+        val op = { x: Double -> if (useX) x * fuzzySet.getValue(x) else fuzzySet.getValue(x) }
+        return integrate(0.0, 100.0, op)
     }
 
-    fun integrate(a: Double, b: Double, f: DoubleUnaryOperator): Double {
-        val N = 10000                 // precision parameter
-        val h = (b - a) / (N - 1)     // step size
+    fun integrate(a: Double, b: Double, f: (Double) -> Double): Double {
+        val n = 10000                 // precision parameter
+        val h = (b - a) / (n - 1)     // step size
 
         // 1/3 terms
-        var sum: Double = 1.0 / 3.0 * (f.applyAsDouble(a) + f.applyAsDouble(b))
+        var sum: Double = 1.0 / 3.0 * (f.invoke(a) + f.invoke(b))
 
         // 4/3 terms
         run {
             var i: Int = 1
-            while (i < N - 1) {
+            while (i < n - 1) {
                 val x = a + h * i
-                sum += 4.0 / 3.0 * f.applyAsDouble(x)
+                sum += 4.0 / 3.0 * f.invoke(x)
                 i += 2
             }
         }
 
         // 2/3 terms
         var i: Int = 2
-        while (i < N - 1) {
+        while (i < n - 1) {
             val x = a + h * i
-            sum += 2.0 / 3.0 * f.applyAsDouble(x)
+            sum += 2.0 / 3.0 * f.invoke(x)
             i += 2
         }
 
