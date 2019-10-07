@@ -72,7 +72,7 @@ class Lab3 {
                         mutableListOf(
                                 Condition("City road", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.cityRoad)),
                                 Condition("Night time", Variable(1), RoadFuzzySet(RoadFuzzySetIntervals.nightTime)),
-                                Condition("Mainly cloudy", Variable(2), RoadFuzzySet(RoadFuzzySetIntervals.mainlyCloudy))),
+                                Condition("Sunny", Variable(2), RoadFuzzySet(RoadFuzzySetIntervals.sunny))),
                         mutableListOf(
                                 Conclusion("Medium", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.medium)))
                 ),
@@ -80,6 +80,22 @@ class Lab3 {
                         mutableListOf(
                                 Condition("City road", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.cityRoad)),
                                 Condition("Daylight hours", Variable(1), RoadFuzzySet(RoadFuzzySetIntervals.daylightHours)),
+                                Condition("Sunny", Variable(2), RoadFuzzySet(RoadFuzzySetIntervals.sunny))),
+                        mutableListOf(
+                                Conclusion("High", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.high)))
+                ),
+                Rule(
+                        mutableListOf(
+                                Condition("City road", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.cityRoad)),
+                                Condition("Daylight hours", Variable(1), RoadFuzzySet(RoadFuzzySetIntervals.daylightHours)),
+                                Condition("Sunny", Variable(2), RoadFuzzySet(RoadFuzzySetIntervals.sunny))),
+                        mutableListOf(
+                                Conclusion("High", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.high)))
+                ),
+                Rule(
+                        mutableListOf(
+                                Condition("Expressway", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.expressway)),
+                                Condition("Night time", Variable(1), RoadFuzzySet(RoadFuzzySetIntervals.nightTime)),
                                 Condition("Sunny", Variable(2), RoadFuzzySet(RoadFuzzySetIntervals.sunny))),
                         mutableListOf(
                                 Conclusion("High", Variable(0), RoadFuzzySet(RoadFuzzySetIntervals.high)))
@@ -110,7 +126,7 @@ class Lab3 {
                 )
         )
 
-        val algorithm = MamdaniAlgorithm(rules, arrayOf(80.0, 12.0, 90.0))
+        val algorithm = MamdaniAlgorithm(rules, arrayOf(70.0, 14.0, 90.0))
         val result = algorithm.run()
 
         println("Result for speed: $result")
