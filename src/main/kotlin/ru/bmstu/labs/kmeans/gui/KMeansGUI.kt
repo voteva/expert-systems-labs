@@ -132,6 +132,7 @@ class KMeansGUI {
                 val point = DoubleArray(2)
                 point[X] = pointString[X].trim().toDouble()
                 point[Y] = pointString[Y].trim().toDouble()
+
                 points.add(point)
                 if (point[X] < minmaxlens[MIN][X]) {
                     minmaxlens[MIN][X] = point[X]
@@ -316,7 +317,7 @@ class KMeansGUI {
         private const val X = 0
         private const val Y = 1
 
-        private const val RESOLUTION = 300
+        private const val RESOLUTION = 400
         private val RANDOM = Random(System.currentTimeMillis())
     }
 }
