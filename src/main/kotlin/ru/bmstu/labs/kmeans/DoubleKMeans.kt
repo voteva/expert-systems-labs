@@ -6,22 +6,21 @@ open class DoubleKMeans(
         centroids: Array<DoubleArray>,
         points: Array<DoubleArray>,
         equal: Boolean,
-        doubleDistanceFunction: DoubleDistanceFunction,
-        listener: Listener?
+        doubleDistanceFunction: DoubleDistanceFunction
 ) : AbstractKMeans<DoubleArray, DoubleArray>(
         centroids,
         points,
         equal,
         DistanceFunction(doubleDistanceFunction),
-        CenterFunction(),
-        listener
+        CenterFunction()
 ) {
 
     interface DoubleDistanceFunction {
         fun distance(p1: DoubleArray, p2: DoubleArray): Double
     }
 
-    protected class DistanceFunction(private val doubleDistanceFunction: DoubleDistanceFunction) : AbstractKMeans.DistanceFunction<DoubleArray, DoubleArray> {
+    protected class DistanceFunction(private val doubleDistanceFunction: DoubleDistanceFunction)
+        : AbstractKMeans.DistanceFunction<DoubleArray, DoubleArray> {
 
         override fun distance(changed: BooleanArray, distances: Array<DoubleArray>, centroids: Array<DoubleArray>, points: Array<DoubleArray>) {
             for (c in centroids.indices) {

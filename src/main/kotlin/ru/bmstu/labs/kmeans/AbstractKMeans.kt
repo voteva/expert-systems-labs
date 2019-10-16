@@ -7,20 +7,15 @@ open class AbstractKMeans<Centroid, Point>(
         val points: Array<Point>,
         val equal: Boolean,
         val distanceFunction: DistanceFunction<Centroid, Point>,
-        val centerFunction: CenterFunction<Centroid, Point>,
-        val listener: Listener?
+        val centerFunction: CenterFunction<Centroid, Point>
 ) {
 
-    protected val idealCount: Int
-    protected val distances: Array<DoubleArray>
     open val assignments: IntArray
-    protected val changed: BooleanArray
     open val counts: IntArray
-    protected val done: BooleanArray
-
-    interface Listener {
-        fun iteration(iteration: Int, move: Int)
-    }
+    private val idealCount: Int
+    private val distances: Array<DoubleArray>
+    private val changed: BooleanArray
+    private val done: BooleanArray
 
     interface DistanceFunction<Centroid, Point> {
         fun distance(changed: BooleanArray, distances: Array<DoubleArray>, centroids: Array<Centroid>, points: Array<Point>)
@@ -31,11 +26,8 @@ open class AbstractKMeans<Centroid, Point>(
     }
 
     init {
-        if (centroids.size > 0) {
-            idealCount = points.size / centroids.size
-        } else {
-            idealCount = 0
-        }
+        idealCount = if (centroids.isNotEmpty()) points.size / centroids.size else 0
+
         distances = Array(centroids.size) { DoubleArray(points.size) }
         assignments = IntArray(points.size)
         Arrays.fill(assignments, -1)
@@ -57,17 +49,16 @@ open class AbstractKMeans<Centroid, Point>(
             moveCentroids()
             calculateDistances()
             move += makeAssignments()
-            listener?.iteration(i, move)
         }
         return assignments
     }
 
-    protected fun calculateDistances() {
+    private fun calculateDistances() {
         distanceFunction.distance(changed, distances, centroids, points)
         Arrays.fill(changed, false)
     }
 
-    protected fun makeAssignments(): Int {
+    private fun makeAssignments(): Int {
         var move = 0
         Arrays.fill(counts, 0)
         for (p in points.indices) {
@@ -91,7 +82,7 @@ open class AbstractKMeans<Centroid, Point>(
         return move
     }
 
-    protected fun remakeAssignments(cc: Int): Int {
+    private fun remakeAssignments(cc: Int): Int {
         var move = 0
         var md = Double.POSITIVE_INFINITY
         var nc = -1
@@ -132,7 +123,7 @@ open class AbstractKMeans<Centroid, Point>(
         return move
     }
 
-    protected fun nearestCentroid(p: Int): Int {
+    private fun nearestCentroid(p: Int): Int {
         var md = Double.POSITIVE_INFINITY
         var nc = -1
         for (c in centroids.indices) {
@@ -145,7 +136,7 @@ open class AbstractKMeans<Centroid, Point>(
         return nc
     }
 
-    protected fun nearestPoint(inc: Int, fromc: Int): Int {
+    private fun nearestPoint(inc: Int, fromc: Int): Int {
         var md = Double.POSITIVE_INFINITY
         var np = -1
         for (p in points.indices) {
@@ -161,7 +152,7 @@ open class AbstractKMeans<Centroid, Point>(
         return np
     }
 
-    protected fun largestCentroid(except: Int): Int {
+    private fun largestCentroid(except: Int): Int {
         var lc = -1
         val mc = 0
         for (c in centroids.indices) {
@@ -175,7 +166,7 @@ open class AbstractKMeans<Centroid, Point>(
         return lc
     }
 
-    protected fun fillEmptyCentroids(): Int {
+    private fun fillEmptyCentroids(): Int {
         var move = 0
         for (c in centroids.indices) {
             if (counts[c] == 0) {
@@ -192,7 +183,7 @@ open class AbstractKMeans<Centroid, Point>(
         return move
     }
 
-    protected fun moveCentroids() {
+    private fun moveCentroids() {
         centerFunction.center(changed, assignments, centroids, points)
     }
 }
