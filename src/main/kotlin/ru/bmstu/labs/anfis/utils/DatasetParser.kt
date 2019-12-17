@@ -3,7 +3,7 @@ package ru.bmstu.labs.anfis.utils
 import ru.bmstu.labs.anfis.model.Vector
 import java.io.File
 
-object Parser {
+object DatasetParser {
     @JvmStatic
     fun parseVectors(filename: String): List<Vector> {
         val vectors: MutableList<Vector> = mutableListOf()

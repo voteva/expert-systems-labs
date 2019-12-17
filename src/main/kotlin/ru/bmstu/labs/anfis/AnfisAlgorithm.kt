@@ -26,12 +26,12 @@ class AnfisAlgorithm(rulesNum: Int) {
 
     fun predict(x: Double, y: Double) {
         // Здесь вычисляются функции принадлежности muA и muB и вычисляется их результат
-        for (value in rules) {
-            val A = value!!.a
+        for (rule in rules) {
+            val A = rule!!.a
             A.calculate(x)
-            val B = value.b
+            val B = rule.b
             B.calculate(y)
-            value.output = A.output * B.output
+            rule.output = A.output * B.output
 
             if (java.lang.Double.isNaN(A.output) || java.lang.Double.isNaN(B.output)) {
                 exitProcess(0)
@@ -142,8 +142,8 @@ class AnfisAlgorithm(rulesNum: Int) {
     }
 
     init {
-        val milis = System.currentTimeMillis()
-        val random = Random(milis)
+        val millis = System.currentTimeMillis()
+        val random = Random(millis)
         rules = arrayOfNulls(rulesNum)
         for (i in 0 until rulesNum) {
             rules[i] = Rule(

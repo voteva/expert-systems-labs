@@ -3,7 +3,7 @@ package ru.bmstu.labs
 import org.junit.Test
 import ru.bmstu.labs.anfis.AnfisAlgorithm
 import ru.bmstu.labs.anfis.utils.DatasetBuilder
-import ru.bmstu.labs.anfis.utils.Parser
+import ru.bmstu.labs.anfis.utils.DatasetParser
 
 class Lab5 {
 
@@ -13,7 +13,7 @@ class Lab5 {
 
     @Test
     fun anfis() {
-        val vectors = Parser.parseVectors(filename)
+        val vectors = DatasetParser.parseVectors(filename)
         val anfis = AnfisAlgorithm(rulesNum)
 
         anfis.train(vectors, epochNum)
@@ -32,6 +32,7 @@ class Lab5 {
         for (input in inputs) {
             anfis.predict(input.first, input.second)
 
+            println("x=${input.first} y=${input.second}")
             println("Expected result: ${DatasetBuilder.func(input.first, input.second)}")
             println("Actual result: ${anfis.output}")
             println()
