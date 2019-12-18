@@ -25,8 +25,7 @@ class Lab5 {
                 Pair(3.0, 2.5),
                 Pair(-2.0, 0.5),
                 Pair(3.0, -0.4),
-                Pair(-3.0, -2.8),
-                Pair(1.2, -3.7)
+                Pair(-3.0, -2.8)
         )
 
         for (input in inputs) {

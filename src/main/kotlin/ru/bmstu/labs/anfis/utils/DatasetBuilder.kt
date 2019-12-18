@@ -3,6 +3,8 @@ package ru.bmstu.labs.anfis.utils
 import java.io.IOException
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
+import kotlin.math.cos
+import kotlin.math.pow
 
 object DatasetBuilder {
     @JvmStatic
@@ -22,6 +24,6 @@ object DatasetBuilder {
 
     @JvmStatic
     fun func(x: Double, y: Double): Double {
-        return (Math.pow(x - 1, 2.0) + Math.pow(y + 2, 2.0) - 5 * x * y + 3) * Math.pow(Math.cos(x / 5), 2.0)
+        return ((x - 1).pow(2) + (y + 2).pow(2) - 5 * x * y + 3) * cos(x / 5).pow(2)
     }
 }

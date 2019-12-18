@@ -4,14 +4,17 @@ import ru.bmstu.labs.anfis.model.Conclusion
 import ru.bmstu.labs.anfis.model.Rule
 import ru.bmstu.labs.anfis.model.RuleUnit
 import ru.bmstu.labs.anfis.model.Vector
+import java.lang.Double.isNaN
 import java.util.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlin.system.exitProcess
 
 class AnfisAlgorithm(rulesNum: Int) {
-    var rules: Array<Rule?>
-        private set
     var output: Double
         private set
+
+    private var rules: Array<Rule?>
     private var error: Double
     private var eta: Double
 
@@ -24,54 +27,68 @@ class AnfisAlgorithm(rulesNum: Int) {
             return sumOfWeights
         }
 
-    fun predict(x: Double, y: Double) {
-        // Здесь вычисляются функции принадлежности muA и muB и вычисляется их результат
-        for (rule in rules) {
-            val A = rule!!.a
-            A.calculate(x)
-            val B = rule.b
-            B.calculate(y)
-            rule.output = A.output * B.output
+    fun train(vectors: List<Vector>, epochNum: Int = 10000) {
+        println("Training starts..\n")
 
-            if (java.lang.Double.isNaN(A.output) || java.lang.Double.isNaN(B.output)) {
+        for (i in 0..epochNum) {
+            println("Epoch: ${i + 1}")
+
+            for (vector in vectors) {
+                predict(vector.x, vector.y)
+                backpropagate(vector.x, vector.y, vector.output)
+            }
+            update()
+            writeAndResetError(vectors.size)
+        }
+
+        println("Training completed\n")
+    }
+
+    fun predict(x: Double, y: Double) {
+        var overall = 0.0
+
+        for (rule in rules) {
+            // вычисляется результат для функций принадлежности mA и mB
+            val mA = rule!!.a
+            mA.calculate(x)
+            val mB = rule.b
+            mB.calculate(y)
+            // степень выполнения правила расчитывается как произведение входных сигналов
+            rule.output = mA.output * mB.output
+
+            if (isNaN(mA.output) || isNaN(mB.output)) {
                 exitProcess(0)
             }
+
+            rule.conclusion.conclude(x, y)
+            overall += rule.output * rule.conclusion.conclusion
         }
 
-        // tu se racuna wi * fi
-        var overall = 0.0
-        for (rule in rules) {
-            rule!!.conclusion.conclude(x, y)
-            overall = overall + rule.output * rule.conclusion.conclusion
-        }
-        // wi * fi se podijeli sa sum_i(wi)
-        overall = overall / sumOfWeights
-        // izlaz se spremi i ispise
+        overall /= sumOfWeights
         output = overall
     }
 
-    fun backpropagate(x: Double, y: Double, output: Double) {
-        error += Math.pow(output - this.output, 2.0)
+    private fun backpropagate(x: Double, y: Double, output: Double) {
+        error += (output - this.output).pow(2)
         val sum = sumOfWeights
         for (i in rules.indices) {
-            val A = rules[i]!!.a
-            val B = rules[i]!!.b
-            var zDiff = getSumOfZ(i)
+            val mA = rules[i]!!.a
+            val mB = rules[i]!!.b
+            val zDiff = getSumOfZ(i)
             // update ruleunit A
-            var a = A.a
-            var b = A.b
-            var gradA = eta * (output - this.output) * B.output * (zDiff / Math.pow(sum, 2.0)) * b * A.output * (1 - A.output)
-            var gradB = eta * (output - this.output) * B.output * (zDiff / Math.pow(sum, 2.0)) * (x - a) * A.output * (1 - A.output)
-            A.gradA = A.gradA + gradA
-            A.gradB = A.gradB + gradB
-            zDiff = getSumOfZ(i)
+            var a = mA.a
+            var b = mA.b
+            var gradA = eta * (output - this.output) * mB.output * (zDiff / sum.pow(2)) * b * mA.output * (1 - mA.output)
+            var gradB = eta * (output - this.output) * mB.output * (zDiff / sum.pow(2)) * (x - a) * mA.output * (1 - mA.output)
+            mA.gradA = mA.gradA + gradA
+            mA.gradB = mA.gradB + gradB
             // update ruleunit B
-            a = B.a
-            b = B.b
-            gradA = eta * (output - this.output) * A.output * (zDiff / Math.pow(sum, 2.0)) * b * B.output * (1 - B.output)
-            gradB = eta * (output - this.output) * A.output * (zDiff / Math.pow(sum, 2.0)) * (y - a) * B.output * (1 - B.output)
-            B.gradA = B.gradA + gradA
-            B.gradB = B.gradB + gradB
+            a = mB.a
+            b = mB.b
+            gradA = eta * (output - this.output) * mA.output * (zDiff / sum.pow(2)) * b * mB.output * (1 - mB.output)
+            gradB = eta * (output - this.output) * mA.output * (zDiff / sum.pow(2)) * (y - a) * mB.output * (1 - mB.output)
+            mB.gradA = mB.gradA + gradA
+            mB.gradB = mB.gradB + gradB
             val c = rules[i]!!.conclusion
             val gradP = eta * (output - this.output) * rules[i]!!.output / sumOfWeights * x
             val gradQ = eta * (output - this.output) * rules[i]!!.output / sumOfWeights * y
@@ -114,31 +131,11 @@ class AnfisAlgorithm(rulesNum: Int) {
         return sum
     }
 
-    // option = 0 --> batch; option = 1 --> stochastic;
-    fun train(vectors: List<Vector>, epochNum: Int = 99999, option: Int = 0) {
-        println("Training starts..\n")
-
-        for (i in 0..epochNum) {
-            println("Epoch: ${i + 1}")
-
-            for (vector in vectors) {
-                predict(vector.x, vector.y)
-                backpropagate(vector.x, vector.y, vector.output)
-                if (option == 1) update()
-            }
-            if (option == 0) update()
-            writeAndResetError(vectors.size)
-        }
-
-        println("Training completed\n")
-    }
-
-    private fun writeAndResetError(trainingSize: Int): Double {
+    private fun writeAndResetError(trainingSize: Int) {
         error /= trainingSize.toDouble()
-        println("Deviation ${error}\n")
-        val err = error
+        error = sqrt(error)
+        println("Deviation $error\n")
         error = 0.0
-        return err
     }
 
     init {
